@@ -1,0 +1,94 @@
+{% extends "blog/base.html" %}
+{% load tz %}
+{% block content %}
+    <div class="btn-toolbar">
+        {% block descrizione %}{% endblock descrizione %}
+        <div class="dropdown show" style="margin-left: 20px">
+            <a class="btn btn-secondary dropdown-toggle"
+               href="#" role="button"
+               id="ordinaper" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+               style="margin: 2px">
+                Ordina per
+            </a>
+            {% block order %}
+            {% endblock order %}
+        </div>
+
+        {% block type %}{% endblock type %}
+    </div>
+
+    <br>
+    {% for post in posts %}
+        <article class="media content-section">
+            <img class="rounded-circle article-img" src="{{ post.author.user_profile.image.url }}">
+
+            <div class="media-body">
+                <div class="article-metadata">
+                    <a class="mr-2"
+                       href="{% url 'user-posts' post.author.username '-date_posted' %}">{{ post.author.username }}</a>
+                    <small class="text-muted">{{ post.date_posted | localtime }}</small>
+                    <a class="mr-2" href="{% url 'blog-thread' post.thread '-date_posted' %}">{{ post.thread }}</a>
+                    {% if post.type.type == "Informazione" %}
+                        <a class="mr-2" href="{% url 'blog-type' post.type '-date_posted' %}" style="color: hotpink">Informazione</a>
+                        </div>
+                        <h2><a class="article-title" style="color: hotpink"
+                               href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
+                    {% elif post.type.type == "Spiegazione" %}
+                        <a class="mr-2" href="{% url 'blog-type' post.type '-date_posted' %}" style="color: red">Spiegazione</a>
+                        </div>
+                        <h2><a class="article-title" style="color: red"
+                               href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
+                    {% elif post.type.type == "Esercizio" %}
+                        <a class="mr-2" href="{% url 'blog-type' post.type '-date_posted' %}" style="color: limegreen">Esercizio</a>
+                        </div>
+                        <h2><a class="article-title" style="color: limegreen"
+                               href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
+                    {% elif post.type.type == "Meme" %}
+                        <a class="mr-2" href="{% url 'blog-type' post.type '-date_posted' %}" style="color: blueviolet">Meme</a>
+                        </div>
+                        <h2><a class="article-title" style="color: blueviolet"
+                               href="{% url 'post-detail' post.id %}">{{ post.title }}</a></h2>
+                    {% endif %}
+
+            <p class="article-content">{{ post.content }}</p>
+            {% if post.image %}
+                <div><img src="{{ post.image.url }}" alt="img"></div>
+            {% endif %}
+            <br>
+            <a class="btn btn-outline-danger btn-sm" href="{% url 'post-detail' post.id %}">
+                Karma: {{ post.reputazione }} ({{ post.total_likes }} / {{ post.total_dislikes }})
+            </a>
+
+            <a class="btn btn-outline-secondary btn-sm" href="{% url 'post-detail' post.id %}">
+                Commenti: {{ post.post_comment.count }}
+            </a>
+            </div>
+        </article>
+    {% endfor %}
+
+    {% if is_paginated %}
+
+        {% if page_obj.has_previous %}
+            <a class="btn btn-outline-warning mb-4" style="background: whitesmoke" href="?page=1">Prima</a>
+            <a class="btn btn-outline-warning mb-4" style="background: whitesmoke"
+               href="?page={{ page_obj.previous_page_number }}"><</a>
+        {% endif %}
+
+        {% for num in page_obj.paginator.page_range %}
+            {% if page_obj.number == num %}
+                <a class="btn btn-warning mb-4" href="?page={{ num }}">{{ num }}</a>
+            {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                <a class="btn btn-outline-warning mb-4" style="background: whitesmoke"
+                   href="?page={{ num }}">{{ num }}</a>
+            {% endif %}
+        {% endfor %}
+
+        {% if page_obj.has_next %}
+            <a class="btn btn-outline-warning mb-4" style="background: whitesmoke"
+               href="?page={{ page_obj.next_page_number }}">></a>
+            <a class="btn btn-outline-warning mb-4" style="background: whitesmoke"
+               href="?page={{ page_obj.paginator.num_pages }}">Ultima</a>
+        {% endif %}
+
+    {% endif %}
+{% endblock content %}

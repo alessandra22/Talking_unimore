@@ -1,0 +1,12 @@
+{% extends "blog/home.html" %}
+
+{% block order %}
+    <div class="dropdown-menu" aria-labelledby="ordinaper">
+        <a class="dropdown-item" href="{% url 'blog-type' view.kwargs.type '-date_posted' %}">Data</a>
+        <a class="dropdown-item" href="{% url 'blog-type' view.kwargs.type '-reputazione' %}">Utilità</a>
+    </div>
+{% endblock order %}
+
+{% block descrizione %}
+    <h2 class="mb-3">Post di tipo {{ view.kwargs.type }} ({{ page_obj.paginator.count }})</h2>
+{% endblock descrizione %}

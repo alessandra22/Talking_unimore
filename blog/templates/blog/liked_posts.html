@@ -1,0 +1,12 @@
+{% extends "blog/home.html" %}
+
+{% block order %}
+    <div class="dropdown-menu" aria-labelledby="ordinaper">
+        <a class="dropdown-item" href="{% url 'liked-posts' '-date_posted' %}">Data</a>
+        <a class="dropdown-item" href="{% url 'liked-posts' '-reputazione' %}">Utilità</a>
+    </div>
+{% endblock order %}
+
+{% block descrizione %}
+    <h2 class="mb-3">I piaciuti di {{ user.username }} ({{ page_obj.paginator.count }})</h2>
+{% endblock descrizione %}

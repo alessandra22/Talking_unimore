@@ -1,0 +1,10 @@
+{% extends "blog/base.html" %}
+{% block content %}
+    <h1>Scegli il thread della categoria selezionata (ordine alfabetico):</h1>
+    <ul>
+        {% for esame in list_esami %}
+            <br>
+            <li><a href="{% url 'blog-thread' esame '-date_posted' %}">{{ esame }}</a></li>
+        {% endfor %}
+    </ul>
+{% endblock content %}

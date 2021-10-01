@@ -1,0 +1,88 @@
+{% extends "blog/base.html" %}
+{% load tz %}
+{% block content %}
+    <article class="media content-section">
+        <img class="rounded-circle article-img" src="{{ object.author.user_profile.image.url }}">
+        <div class="media-body">
+            <div class="article-metadata">
+                <a class="mr-2"
+                   href="{% url 'user-posts' post.author.username '-date_posted' %}">{{ object.author.username }}</a>
+                <small class="text-muted">{{ object.date_posted | localtime }}</small>
+                <a class="mr-2" href="{% url 'blog-thread' post.thread '-date_posted' %}">{{ object.thread }}</a>
+                {% if post.type == "Informazione" %}
+                    <a class="mr-2" href="{% url 'blog-type' post.type '-date_posted' %}" style="color: hotpink">Informazione</a>
+                {% elif post.type == "Spiegazione" %}
+                    <a class="mr-2" href="{% url 'blog-type' post.type '-date_posted' %}"
+                       style="color: red">Spiegazione</a>
+                {% elif post.type == "Esercizio" %}
+                    <a class="mr-2" href="{% url 'blog-type' post.type '-date_posted' %}" style="color: limegreen">Esercizio</a>
+                {% elif post.type == "Meme" %}
+                    <a class="mr-2" href="{% url 'blog-type' post.type '-date_posted' %}"
+                       style="color: blueviolet">Meme</a>
+                {% endif %}
+
+                {% if object.author == user %}
+                    <div>
+                        <a class="btn btn-secondary btn-sm mt-1 mb-1"
+                           href="{% url 'post-update' object.id %}">Modifica</a>
+                        <a class="btn btn-danger btn-sm mt-1 mb-1" href="{% url 'post-delete' object.id %}">Elimina</a>
+                    </div>
+                {% endif %}
+            </div>
+            <h2 class="article-title">{{ object.title }}</h2>
+            <p class="article-content">{{ object.content }}</p>
+            {% if post.image %}
+                <div><img src="{{ post.image.url }}" alt="img"></div>
+            {% endif %}
+
+            {% if user.is_authenticated %}
+                <br>
+                <h2>Reazioni:({{ post.interazioni }})</h2>
+                {% if liked %}
+                    <a class="btn btn-warning" href="{% url 'like_post' post.id %}" methods="submit">Utile
+                        ({{ n_like }})</a>
+                {% else %}
+                    <a class="btn btn-outline-warning" href="{% url 'like_post' post.id %}" methods="submit">Utile
+                        ({{ n_like }})</a>
+                {% endif %}
+
+                {% if disliked %}
+                    <a class="btn btn-secondary" href="{% url 'dislike_post' post.id %}" methods="submit">Non utile
+                        ({{ n_dislike }})</a>
+                {% else %}
+                    <a class="btn btn-outline-secondary" href="{% url 'dislike_post' post.id %}" methods="submit">Non
+                        utile
+                        ({{ n_dislike }})</a>
+                {% endif %}
+            {% endif %}
+
+            <br><br>
+            <h2 class="article-title">Commenti: ({{ post.post_comment.count }})</h2>
+            <a class="btn btn-link" href="{% url 'comment-create' post.id %}">Lascia un commento</a>
+            <br><br>
+            {% if post.post_comment.all %}
+                {% for comment in post.post_comment.all %}
+                    <article class="media content-section">
+                        <img class="rounded-circle article-img" src="{{ comment.author.user_profile.image.url }}">
+                        <div class="media-body">
+                            <div class="article-metadata">
+                                <a class="mr-2"
+                                   href="{% url 'user-posts' comment.author.username '-date_posted' %}">{{ comment.author.username }}</a>
+                                <small class="text-muted">{{ comment.date_posted | localtime }}</small>
+                            </div>
+                            <p class="article-title">{{ comment.content }}</p>
+                            {% if comment.author == user %}
+                                <div>
+                                    <a class="btn btn-secondary btn-sm mt-1 mb-1"
+                                       href="{% url 'comment-update' comment.pk %}">Modifica</a>
+                                    <a class="btn btn-danger btn-sm mt-1 mb-1"
+                                       href="{% url 'comment-delete' comment.pk comment.post.pk %}">Elimina</a>
+                                </div>
+                            {% endif %}
+                        </div>
+                    </article>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </article>
+{% endblock content %}
